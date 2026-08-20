@@ -1,0 +1,256 @@
+:root {
+  --bg: #12181A;
+  --bg-raised: #1B2326;
+  --ink: #EDEAE2;
+  --ink-dim: #9BA6A2;
+  --gold: #D4A855;
+  --sage: #8FA998;
+  --amber: #E08D3C;
+  --slate: #6C93A6;
+  --ring-track: #263030;
+  --radius: 18px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  overflow: hidden;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.hidden { display: none !important; }
+
+/* ---------- Unlock overlay ---------- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 24px;
+}
+.overlay-card {
+  max-width: 480px;
+  text-align: center;
+}
+.bell-glyph { font-size: 56px; margin-bottom: 8px; }
+.overlay-card h1 {
+  font-family: 'Fraunces', serif;
+  font-size: 32px;
+  font-weight: 600;
+  margin: 0 0 12px;
+}
+.overlay-card p {
+  color: var(--ink-dim);
+  line-height: 1.5;
+  font-size: 15px;
+  margin: 0 0 24px;
+}
+.overlay-card button {
+  display: block;
+  width: 100%;
+  padding: 16px;
+  font-size: 17px;
+  font-family: inherit;
+  font-weight: 500;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  margin-bottom: 12px;
+}
+#unlock-btn {
+  background: var(--gold);
+  color: #1B2326;
+}
+.secondary {
+  background: transparent;
+  color: var(--ink-dim);
+  border: 1px solid #333;
+}
+
+/* ---------- Main app ---------- */
+#app {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: clamp(12px, 3vh, 28px) clamp(20px, 4vw, 48px);
+  font-size: clamp(14px, 1.6vw, 22px);
+  color: var(--ink-dim);
+  letter-spacing: 0.02em;
+}
+.school-name { font-weight: 500; }
+.clock-time {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.ring {
+  width: min(64vh, 60vw);
+  height: min(64vh, 60vw);
+  transform: rotate(-90deg);
+}
+.ring-track {
+  fill: none;
+  stroke: var(--ring-track);
+  stroke-width: 10;
+}
+.ring-progress {
+  fill: none;
+  stroke: var(--sage);
+  stroke-width: 10;
+  stroke-linecap: round;
+  stroke-dasharray: 848.2;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.25s linear, stroke 0.4s ease;
+}
+.ring-progress.transition { stroke: var(--amber); }
+.ring-progress.lunch { stroke: var(--slate); }
+.ring-progress.idle { stroke: var(--ring-track); }
+
+.stage-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+}
+.block-label {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: clamp(20px, 3.4vw, 40px);
+  color: var(--ink);
+  letter-spacing: 0.01em;
+}
+.countdown {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: clamp(48px, 11vw, 140px);
+  line-height: 1.05;
+  margin: 4px 0;
+}
+.sub-label {
+  font-size: clamp(13px, 1.6vw, 20px);
+  color: var(--ink-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.bottombar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: clamp(12px, 3vh, 28px) clamp(20px, 4vw, 48px);
+}
+.next-up {
+  font-size: clamp(13px, 1.5vw, 18px);
+  color: var(--ink-dim);
+}
+.next-up b { color: var(--ink); font-weight: 500; }
+
+.edit-toggle {
+  background: var(--bg-raised);
+  color: var(--ink-dim);
+  border: 1px solid #2A3436;
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* ---------- Schedule panel ---------- */
+.schedule-panel {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 14, 15, 0.88);
+  backdrop-filter: blur(6px);
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.schedule-panel-inner {
+  background: var(--bg-raised);
+  border-radius: var(--radius);
+  max-width: 560px;
+  width: 100%;
+  max-height: 82vh;
+  overflow-y: auto;
+  padding: 28px;
+}
+.schedule-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.schedule-panel-header h2 {
+  font-family: 'Fraunces', serif;
+  margin: 0;
+  font-size: 22px;
+}
+#close-panel {
+  background: none;
+  border: 1px solid #333;
+  color: var(--ink-dim);
+  border-radius: 999px;
+  padding: 6px 16px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.schedule-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.schedule-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #232C2E;
+  font-size: 15px;
+}
+.schedule-list li.current { color: var(--gold); font-weight: 500; }
+.schedule-note {
+  color: var(--ink-dim);
+  font-size: 13px;
+  line-height: 1.5;
+  margin-top: 16px;
+}
+.schedule-note code {
+  background: #0F1517;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+@media (max-width: 480px) {
+  .topbar { font-size: 13px; }
+  .edit-toggle { padding: 8px 14px; }
+}

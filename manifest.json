@@ -1,0 +1,15 @@
+{
+  "name": "Terra Bell Schedule",
+  "short_name": "Bell",
+  "description": "Live period clock and bell for Terra School at Serenbe",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "any",
+  "background_color": "#12181A",
+  "theme_color": "#12181A",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

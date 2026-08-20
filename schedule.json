@@ -1,0 +1,19 @@
+{
+  "schoolName": "Terra School at Serenbe",
+  "note": "Times are 24-hour HH:MM. This schedule applies Monday-Friday. Edit this file and re-deploy (or commit directly on github.com) to change times on all devices.",
+  "blocks": [
+    { "label": "Period 1",  "start": "08:30", "end": "09:20", "type": "class" },
+    { "label": "Transition","start": "09:20", "end": "09:25", "type": "transition" },
+    { "label": "Period 2",  "start": "09:25", "end": "10:15", "type": "class" },
+    { "label": "Transition","start": "10:15", "end": "10:20", "type": "transition" },
+    { "label": "Period 3",  "start": "10:20", "end": "11:10", "type": "class" },
+    { "label": "Transition","start": "11:10", "end": "11:15", "type": "transition" },
+    { "label": "Specials",  "start": "11:15", "end": "12:15", "type": "class" },
+    { "label": "Lunch",     "start": "12:15", "end": "12:55", "type": "lunch" },
+    { "label": "HCD",       "start": "12:55", "end": "13:40", "type": "class" },
+    { "label": "Transition","start": "13:40", "end": "13:45", "type": "transition" },
+    { "label": "Period 4",  "start": "13:45", "end": "14:35", "type": "class" },
+    { "label": "Transition","start": "14:35", "end": "14:40", "type": "transition" },
+    { "label": "Period 5",  "start": "14:40", "end": "15:30", "type": "class" }
+  ]
+}
