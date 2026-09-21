@@ -1,6 +1,7 @@
 {
   "schoolName": "Terra School at Serenbe",
   "note": "Times are 24-hour HH:MM. This schedule applies Monday-Friday. Edit this file and re-deploy (or commit directly on github.com) to change times on all devices.",
+  "preStartMinutes": 10,
   "blocks": [
     { "label": "Period 1",  "start": "08:30", "end": "09:20", "type": "class" },
     { "label": "Transition","start": "09:20", "end": "09:25", "type": "transition" },
