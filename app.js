@@ -21,7 +21,8 @@
   let audioCtx = null;
   let soundEnabled = false;
   let blocksToday = [];
-  let lastBlockKey = null; // used to detect boundary crossings for the chime
+  let lastStateKey = null; // used to detect boundary crossings for the chime
+  let hasTicked = false;   // suppress a chime on the very first render after page load
   let scheduleRaw = null;
 
   // ---------- Audio ----------
@@ -115,6 +116,14 @@
     return `${m}:${s.toString().padStart(2, "0")}`;
   }
 
+  function fmtHHMMTo12Hour(hhmm) {
+    const [hRaw, m] = hhmm.split(":").map(Number);
+    const ampm = hRaw >= 12 ? "PM" : "AM";
+    let h = hRaw % 12;
+    if (h === 0) h = 12;
+    return `${h}:${m.toString().padStart(2, "0")} ${ampm}`;
+  }
+
   function colorClassFor(type) {
     if (type === "transition") return "transition";
     if (type === "lunch") return "lunch";
@@ -130,7 +139,7 @@
 
     if (day === 0 || day === 6) {
       renderIdle("No school today");
-      lastBlockKey = null;
+      registerState("idle-weekend", now, false);
       return;
     }
 
@@ -143,23 +152,48 @@
 
     if (curIdx === -1) {
       const nextIdx = findNextIndex(blocksToday, now);
+
+      if (nextIdx === 0) {
+        // Before the first block of the day — check the pre-start countdown window.
+        const first = blocksToday[0];
+        const preStartMs = (scheduleRaw.preStartMinutes || 0) * 60 * 1000;
+        const windowStart = new Date(first.startDate.getTime() - preStartMs);
+
+        if (preStartMs > 0 && now >= windowStart) {
+          const total = first.startDate - windowStart;
+          const elapsed = now - windowStart;
+          const remaining = first.startDate - now;
+          const frac = Math.min(1, Math.max(0, elapsed / total));
+
+          els.blockLabel.textContent = "Before School";
+          els.countdown.textContent = fmtCountdown(remaining);
+          els.subLabel.textContent = "until day starts";
+          els.ringProgress.setAttribute("class", "ring-progress transition");
+          els.ringProgress.style.strokeDashoffset = RING_CIRCUMFERENCE * (1 - frac);
+          els.nextUp.innerHTML = `Next: <b>${first.label}</b> at ${fmtClock(first.startDate)}`;
+
+          registerState("prestart", now, false);
+          return;
+        }
+
+        renderIdle(`Day starts at ${fmtClock(first.startDate)}`);
+        registerState("idle-before", now, false);
+        return;
+      }
+
       if (nextIdx === -1) {
         renderIdle("School day complete");
+        // Chime-worthy: this is the moment the last block of the day just ended.
+        registerState("idle-after", now, true);
       } else {
         const next = blocksToday[nextIdx];
         renderIdle(`Day starts at ${fmtClock(next.startDate)}`);
+        registerState("idle-before", now, false);
       }
-      lastBlockKey = null;
       return;
     }
 
     const block = blocksToday[curIdx];
-    const key = `${now.toDateString()}::${curIdx}`;
-
-    if (lastBlockKey !== null && lastBlockKey !== key) {
-      playChime();
-    }
-    lastBlockKey = key;
 
     const total = block.endDate - block.startDate;
     const elapsed = now - block.startDate;
@@ -183,6 +217,24 @@
     } else {
       els.nextUp.textContent = "Last block of the day";
     }
+
+    // Chime-worthy: entering any real class/transition/lunch block.
+    registerState(`block::${curIdx}`, now, true);
+  }
+
+  // Detects a boundary crossing into a new state and fires the chime only when
+  // that specific crossing is chime-worthy (chimeworthy=true) — i.e. the start
+  // of a real block, or the end of the school day. Entering an idle state
+  // (weekend, before school, the pre-start countdown window) never chimes.
+  // The very first tick after page load never chimes either, so the bell
+  // doesn't fire just because the page happened to load mid-period.
+  function registerState(rawKey, now, chimeworthy) {
+    const key = `${now.toDateString()}::${rawKey}`;
+    if (hasTicked && chimeworthy && lastStateKey !== key) {
+      playChime();
+    }
+    lastStateKey = key;
+    hasTicked = true;
   }
 
   function renderIdle(message) {
@@ -202,7 +254,7 @@
     (scheduleRaw.blocks || []).forEach((b, i) => {
       const li = document.createElement("li");
       if (i === curIdx) li.className = "current";
-      li.innerHTML = `<span>${b.label}</span><span>${b.start}\u2013${b.end}</span>`;
+      li.innerHTML = `<span>${b.label}</span><span>${fmtHHMMTo12Hour(b.start)}\u2013${fmtHHMMTo12Hour(b.end)}</span>`;
       els.scheduleList.appendChild(li);
     });
   }
