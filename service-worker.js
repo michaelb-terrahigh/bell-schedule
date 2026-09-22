@@ -1,4 +1,4 @@
-const CACHE_NAME = "terra-bell-v2";
+const CACHE_NAME = "terra-bell-v3";
 const APP_SHELL = [
   "./index.html",
   "./style.css",
