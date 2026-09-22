@@ -79,8 +79,29 @@
     return d;
   }
 
+  const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+  function blocksForDay(schedule, now) {
+    const dayName = DAY_NAMES[now.getDay()];
+    const overrides = (schedule.dayOverrides && schedule.dayOverrides[dayName]) || [];
+
+    let blocks = schedule.blocks.slice();
+
+    overrides.forEach((ov) => {
+      const idx = blocks.findIndex((b) => b.label === ov.replaceLabel);
+      if (idx !== -1) {
+        blocks.splice(idx, 1, ...ov.with);
+      }
+      // If replaceLabel isn't found (e.g. someone renamed "Specials" later),
+      // the override is silently skipped rather than breaking the schedule —
+      // worth checking dayOverrides after renaming any block label.
+    });
+
+    return blocks;
+  }
+
   function buildTodayBlocks(schedule, now) {
-    return schedule.blocks.map((b) => ({
+    return blocksForDay(schedule, now).map((b) => ({
       ...b,
       startDate: timeToDate(b.start, now),
       endDate: timeToDate(b.end, now),
@@ -251,10 +272,10 @@
     const now = new Date();
     const curIdx = blocksToday.length ? findCurrentIndex(blocksToday, now) : -1;
     els.scheduleList.innerHTML = "";
-    (scheduleRaw.blocks || []).forEach((b, i) => {
+    blocksToday.forEach((b, i) => {
       const li = document.createElement("li");
       if (i === curIdx) li.className = "current";
-      li.innerHTML = `<span>${b.label}</span><span>${fmtHHMMTo12Hour(b.start)}\u2013${fmtHHMMTo12Hour(b.end)}</span>`;
+      li.innerHTML = `<span>${b.label}</span><span>${fmtClock(b.startDate)}\u2013${fmtClock(b.endDate)}</span>`;
       els.scheduleList.appendChild(li);
     });
   }
