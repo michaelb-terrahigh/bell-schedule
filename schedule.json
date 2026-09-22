@@ -16,5 +16,16 @@
     { "label": "Period 4",  "start": "13:45", "end": "14:35", "type": "class" },
     { "label": "Transition","start": "14:35", "end": "14:40", "type": "transition" },
     { "label": "Period 5",  "start": "14:40", "end": "15:30", "type": "class" }
-  ]
+  ],
+  "dayOverrides": {
+    "Tuesday": [
+      {
+        "replaceLabel": "Specials",
+        "with": [
+          { "label": "Government", "start": "11:15", "end": "11:45", "type": "class" },
+          { "label": "Advisory",   "start": "11:45", "end": "12:15", "type": "class" }
+        ]
+      }
+    ]
+  }
 }
