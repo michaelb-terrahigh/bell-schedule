@@ -178,6 +178,8 @@
         // Before the first block of the day — check the pre-start countdown window.
         const first = blocksToday[0];
         const preStartMs = (scheduleRaw.preStartMinutes || 0) * 60 * 1000;
+        const warningMinutes = scheduleRaw.preStartWarningMinutes || 0;
+        const warningMs = warningMinutes * 60 * 1000;
         const windowStart = new Date(first.startDate.getTime() - preStartMs);
 
         if (preStartMs > 0 && now >= windowStart) {
@@ -185,15 +187,23 @@
           const elapsed = now - windowStart;
           const remaining = first.startDate - now;
           const frac = Math.min(1, Math.max(0, elapsed / total));
+          const inWarning = warningMs > 0 && remaining <= warningMs;
 
-          els.blockLabel.textContent = "Before School";
+          els.blockLabel.textContent = inWarning
+            ? `${warningMinutes}-Minute Warning`
+            : "Before School";
           els.countdown.textContent = fmtCountdown(remaining);
           els.subLabel.textContent = "until day starts";
-          els.ringProgress.setAttribute("class", "ring-progress transition");
+          els.ringProgress.setAttribute(
+            "class",
+            `ring-progress ${inWarning ? "transition" : "prestart"}`
+          );
           els.ringProgress.style.strokeDashoffset = RING_CIRCUMFERENCE * (1 - frac);
           els.nextUp.innerHTML = `Next: <b>${first.label}</b> at ${fmtClock(first.startDate)}`;
 
-          registerState("prestart", now, false);
+          // Chime-worthy only at the moment the warning phase begins — not when
+          // the outer pre-start window first opens.
+          registerState(inWarning ? "prestart-warning" : "prestart", now, inWarning);
           return;
         }
 
