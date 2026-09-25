@@ -127,6 +127,7 @@ html, body {
   transition: stroke-dashoffset 0.25s linear, stroke 0.4s ease;
 }
 .ring-progress.transition { stroke: var(--amber); }
+.ring-progress.prestart { stroke: var(--gold); }
 .ring-progress.lunch { stroke: var(--slate); }
 .ring-progress.idle { stroke: var(--ring-track); }
 
